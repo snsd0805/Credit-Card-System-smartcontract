@@ -10,7 +10,7 @@ contract SoulboundToken is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() ERC721("Credit System SBT", "CS_SBT") {}
+    constructor() ERC721("Credit System Soulbound Token", "CS_SBT") {}
 
     function mint(address player) public returns (uint256) {
         _tokenIds.increment();
@@ -33,7 +33,7 @@ contract SoulboundToken is ERC721 {
             bytes(
                 string(
                     abi.encodePacked(
-                        '{"name": "Credit System Soulbound Token (CSSBT) #',
+                        '{"name": "Credit System Soulbound Token (CS_SBT) #',
                         Strings.toString(tokenId),
                         '",',
                         '"image_data": "',
