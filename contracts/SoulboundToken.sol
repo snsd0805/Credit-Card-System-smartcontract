@@ -10,6 +10,12 @@ contract SoulboundToken is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    mapping(address => bool) isReliableBank;
+
+    event Borrow(address client, address bank, uint id, uint amount);
+    event Repay(address client, address bank, uint id, uint amount, bool finish);
+    event Warning(address client, address bank);
+
     constructor() ERC721("Credit System Soulbound Token", "CS_SBT") {}
 
     function mint(address player) public onlyOwner returns (uint256) {
@@ -54,4 +60,28 @@ contract SoulboundToken is ERC721, Ownable {
         return string(abi.encodePacked(a, uid_str, b));
     }
 
+    modifier onlyBank {
+        require(isReliableBank[msg.sender] == true, "Only bank can access this function");
+        _;
+    }
+
+    function addReliableBank(address bank) public onlyOwner {
+        isReliableBank[bank] = true;
+    }
+
+    function removeReliableBank(address bank) public onlyOwner {
+        isReliableBank[bank] = false;
+    }
+
+    function logBorrowing(address client, uint id, uint amount) public onlyBank {
+        emit Borrow(client, msg.sender, id, amount);
+    }
+
+    function logRepaying(address client, uint id, uint amount, bool finish) public onlyBank {
+        emit Repay(client, msg.sender, id, amount, finish);
+    }
+
+    function logWarning(address client) public onlyBank {
+        emit Warning(client, msg.sender);
+    }
 }
