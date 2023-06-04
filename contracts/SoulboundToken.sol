@@ -9,8 +9,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract SoulboundToken is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
+    
+    struct Certificate {
+        address addr;
+        uint number;
+    }
 
-    mapping(address => bool) isReliableBank;
+    mapping(address => bool) private isReliableBank;
+    mapping(address => Certificate[]) private certificates;
 
     event Borrow(address client, address bank, uint id, uint amount);
     event Repay(address client, address bank, uint id, uint amount, bool finish);
@@ -65,6 +71,11 @@ contract SoulboundToken is ERC721, Ownable {
         _;
     }
 
+    modifier onlyRegister {
+        require(balanceOf(msg.sender)!=0, "Only Register can access this function");
+        _;
+    }
+
     function addReliableBank(address bank) public onlyOwner {
         isReliableBank[bank] = true;
     }
@@ -83,5 +94,13 @@ contract SoulboundToken is ERC721, Ownable {
 
     function logWarning(address client) public onlyBank {
         emit Warning(client, msg.sender);
+    }
+
+    function addCertificate(address addr, uint number) public onlyRegister{
+        certificates[msg.sender].push(Certificate(addr, number));
+    }
+
+    function listCertificate(address client) public view onlyBank returns (Certificate[] memory){
+        return certificates[client];
     }
 }
