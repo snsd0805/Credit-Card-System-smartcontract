@@ -20,6 +20,12 @@ contract SoulboundToken is ERC721 {
         return newItemId;
     }
 
+    function _beforeTokenTransfer(address from, address to, uint256 firstTokenId, uint256 batchSize) internal virtual override {
+        require(from == address(0) || to == address(0), "SOULBOUND: Non-Transferable.");
+        require(balanceOf(to)==0, "SOULBOUND: Everyone should only have 1 SBT.");
+        super._beforeTokenTransfer(from, to, firstTokenId, batchSize);
+    }
+
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         _requireMinted(tokenId);
 
