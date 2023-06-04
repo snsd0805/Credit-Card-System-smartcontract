@@ -4,15 +4,15 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-// import "./OnChainSVG.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract SoulboundToken is ERC721 {
+contract SoulboundToken is ERC721, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
     constructor() ERC721("Credit System Soulbound Token", "CS_SBT") {}
 
-    function mint(address player) public returns (uint256) {
+    function mint(address player) public onlyOwner returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _mint(player, newItemId);
