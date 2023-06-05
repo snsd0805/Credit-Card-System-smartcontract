@@ -20,7 +20,7 @@ contract SoulboundToken is ERC721, Ownable {
     mapping(address => uint) private address_to_number;
 
     event Borrow(address client, address bank, uint id, uint amount);
-    event Repay(address client, address bank, uint id, uint amount, bool finish);
+    event Repay(address client, address bank, uint id, uint amount);
     event Warning(address client, address bank);
 
     constructor() ERC721("Credit System Soulbound Token", "CS_SBT") {}
@@ -90,8 +90,8 @@ contract SoulboundToken is ERC721, Ownable {
         emit Borrow(client, msg.sender, id, amount);
     }
 
-    function logRepaying(address client, uint id, uint amount, bool finish) public onlyBank {
-        emit Repay(client, msg.sender, id, amount, finish);
+    function logRepaying(address client, uint id, uint amount) public onlyBank {
+        emit Repay(client, msg.sender, id, amount);
     }
 
     function logWarning(address client) public onlyBank {

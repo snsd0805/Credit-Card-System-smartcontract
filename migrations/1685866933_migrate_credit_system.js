@@ -6,6 +6,6 @@ module.exports = function(_deployer) {
 	_deployer.deploy(SBT).then((SBT_instance) => {
 		return _deployer.deploy(Bank, SBT_instance.address).then((Bank_instance) => {
 			return SBT_instance.addReliableBank(Bank_instance.address);
-		})
-	})
+		});
+	});
 };
