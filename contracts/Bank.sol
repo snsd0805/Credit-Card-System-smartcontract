@@ -7,13 +7,13 @@ contract Bank {
     using Counters for Counters.Counter;
     Counters.Counter private id_counter;
 
-	SoulboundToken SBT;
+	SoulboundToken sbt;
 	address owner;
 	mapping(address => uint) arrears;
-	mapping(address => uint) SBTNumbers;
+	mapping(address => uint) sbt_number;
 
 	constructor(address SBT_addr) {
-		SBT = SoulboundToken(SBT_addr);
+		sbt = SoulboundToken(SBT_addr);
 	}
 
     modifier onlyBank {
@@ -21,9 +21,16 @@ contract Bank {
         _;
     }
 
-	function register(uint number) public {
-		uint target = SBT.getAccountNumber(msg.sender);
-		require(target == number, "This is not your SBT number.");
-		SBTNumbers[msg.sender] = target;
+	modifier onlyClient {
+		require(sbt_number[msg.sender] != 0);
+		_;
 	}
+
+	function register(uint number) public {
+		uint target = sbt.getAccountNumber(msg.sender);
+		require(target != 0, "You don't have SBT.");
+		require(target == number, "This is not your SBT number.");
+		sbt_number[msg.sender] = target;
+	}
+
 }
