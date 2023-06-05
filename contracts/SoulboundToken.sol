@@ -17,6 +17,7 @@ contract SoulboundToken is ERC721, Ownable {
 
     mapping(address => bool) private isReliableBank;
     mapping(address => Certificate[]) private certificates;
+    mapping(address => uint) private address_to_number;
 
     event Borrow(address client, address bank, uint id, uint amount);
     event Repay(address client, address bank, uint id, uint amount, bool finish);
@@ -28,6 +29,7 @@ contract SoulboundToken is ERC721, Ownable {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _mint(player, newItemId);
+        address_to_number[player] = newItemId;
 
         return newItemId;
     }
@@ -102,5 +104,9 @@ contract SoulboundToken is ERC721, Ownable {
 
     function listCertificate(address client) public view onlyBank returns (Certificate[] memory){
         return certificates[client];
+    }
+
+    function getAccountNumber(address client) public view onlyBank returns (uint) {
+        return address_to_number[client];
     }
 }
