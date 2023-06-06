@@ -4,8 +4,8 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./SoulboundToken.sol";
 
 contract Bank {
-    using Counters for Counters.Counter;
-    Counters.Counter private id_counter;
+	using Counters for Counters.Counter;
+	Counters.Counter private id_counter;
 
 	struct Order {
 		bool isFinished;
@@ -26,10 +26,10 @@ contract Bank {
 		owner = msg.sender;
 	}
 
-    modifier onlyBank {
-        require(msg.sender == owner, "Only the owner can access this function.");
-        _;
-    }
+	modifier onlyBank {
+		require(msg.sender == owner, "Only the owner can access this function.");
+		_;
+	}
 
 	modifier onlyClient {
 		require(sbt_number[msg.sender] != 0, "You should call register() first.");
