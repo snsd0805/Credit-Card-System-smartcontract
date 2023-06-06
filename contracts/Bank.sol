@@ -3,14 +3,15 @@ pragma solidity >=0.4.22 <0.9.0;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./SoulboundToken.sol";
 
+struct Order {
+	bool isFinished;
+	uint amount;
+	address shop;
+}
+
 contract Bank {
 	using Counters for Counters.Counter;
 	Counters.Counter private id_counter;
-
-	struct Order {
-		bool isFinished;
-		uint amount;
-	}
 
 	SoulboundToken public sbt;
 	address public owner;
@@ -61,7 +62,7 @@ contract Bank {
 		id_counter.increment();
 		uint id = id_counter.current();
 		arrears[msg.sender] += amount;
-		order_info[id] = Order(false, amount);
+		order_info[id] = Order(false, amount, shop);
 		client_orders[msg.sender].push(id);
 		payable(shop).transfer(amount);
 		sbt.logBorrowing(msg.sender, id, amount);
@@ -103,5 +104,21 @@ contract Bank {
 
 	function stop_recv() public onlyBank {
 		recv = false;
+	}
+
+	function getCredit(address client) public view onlySelfOrBank(client) returns (uint) {
+		return credits[client];
+	}
+
+	function getArrear(address client) public view onlySelfOrBank(client) return (uint) {
+		return arrears[client];
+	}
+
+	function getClientOrders(address client) public view onlySelfOrBank(client) returns (Order[] memory){
+		Order[] memory orders = new Order[]( client_orders[client].length );
+		for(uint i=0; i<client_orders[client].length; i++){
+			orders[i] = order_info[client_orders[client][i]];
+		}
+		return orders;
 	}
 }
