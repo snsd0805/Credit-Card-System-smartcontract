@@ -72,6 +72,13 @@ contract SoulboundToken is ERC721, Ownable {
         require(isReliableBank[msg.sender] == true, "Only bank can access this function");
         _;
     }
+    event HERE(address);
+
+	modifier onlySelfOrBank(address addr) {
+        emit HERE(addr);
+		require((msg.sender == owner()) || (msg.sender == addr), "Only the owner can access this function.");
+		_;
+	}
 
     modifier onlyRegister {
         require(balanceOf(msg.sender)!=0, "Only Register can access this function");
@@ -106,7 +113,8 @@ contract SoulboundToken is ERC721, Ownable {
         return certificates[client];
     }
 
-    function getAccountNumber(address client) public view onlyBank returns (uint) {
+    function getAccountNumber(address client) public onlySelfOrBank(client) returns (uint) {
+        
         return address_to_number[client];
     }
 }
