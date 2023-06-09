@@ -65,7 +65,7 @@ contract Bank {
 		order_info[id] = Order(false, amount, shop);
 		client_orders[msg.sender].push(id);
 		payable(shop).transfer(amount);
-		sbt.logBorrowing(msg.sender, id, amount);
+		sbt.logBorrowing(msg.sender, shop, id, amount);
 	}
 
 	function repay() public payable onlyClient returns (uint, uint) {
@@ -110,7 +110,7 @@ contract Bank {
 		return credits[client];
 	}
 
-	function getArrear(address client) public view onlySelfOrBank(client) return (uint) {
+	function getArrear(address client) public view onlySelfOrBank(client) returns (uint) {
 		return arrears[client];
 	}
 

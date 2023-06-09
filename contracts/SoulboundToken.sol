@@ -19,13 +19,13 @@ contract SoulboundToken is ERC721, Ownable {
     mapping(address => Certificate[]) private certificates;
     mapping(address => uint) private address_to_number;
 
-    event Borrow(address client, address bank, uint id, uint amount);
+    event Borrow(address client, address shop, address bank, uint id, uint amount);
     event Repay(address client, address bank, uint id, uint amount);
     event Warning(address client, address bank);
 
     constructor() ERC721("Credit System Soulbound Token", "CS_SBT") {}
 
-    function mint(address player) public onlyOwner returns (uint256) {
+    function mint(address player) public returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _mint(player, newItemId);
@@ -72,11 +72,9 @@ contract SoulboundToken is ERC721, Ownable {
         require(isReliableBank[msg.sender] == true, "Only bank can access this function");
         _;
     }
-    event HERE(address);
 
 	modifier onlySelfOrBank(address addr) {
-        emit HERE(addr);
-		require((msg.sender == owner()) || (msg.sender == addr), "Only the owner can access this function.");
+		require(isReliableBank[msg.sender] == true || (msg.sender == addr), "Only the owner can access this function.");
 		_;
 	}
 
@@ -93,8 +91,8 @@ contract SoulboundToken is ERC721, Ownable {
         isReliableBank[bank] = false;
     }
 
-    function logBorrowing(address client, uint id, uint amount) public onlyBank {
-        emit Borrow(client, msg.sender, id, amount);
+    function logBorrowing(address client, address shop, uint id, uint amount) public onlyBank {
+        emit Borrow(client, shop, msg.sender, id, amount);
     }
 
     function logRepaying(address client, uint id, uint amount) public onlyBank {
@@ -113,8 +111,7 @@ contract SoulboundToken is ERC721, Ownable {
         return certificates[client];
     }
 
-    function getAccountNumber(address client) public onlySelfOrBank(client) returns (uint) {
-        
+    function getAccountNumber(address client) public view onlySelfOrBank(client) returns (uint) {
         return address_to_number[client];
     }
 }
