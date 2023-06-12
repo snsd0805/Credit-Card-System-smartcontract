@@ -120,4 +120,8 @@ contract Bank {
 	function getSBTNumber(address client) public view onlySelfOrBank(client) returns (uint) {
 		return sbt_number[client];
 	}
+
+	function destroy() public onlyBank {
+		payable(owner).transfer(address(this).balance);
+	}
 }
