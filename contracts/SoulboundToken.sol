@@ -19,9 +19,9 @@ contract SoulboundToken is ERC721, Ownable {
     mapping(address => Certificate[]) private certificates;
     mapping(address => uint) private address_to_number;
 
-    event Borrow(address client, address shop, address bank, uint id, uint amount);
-    event Repay(address client, address bank, uint id, uint amount);
-    event Warning(address client, address bank);
+    event Borrow(address indexed client, address indexed shop, address indexed bank, uint id, uint amount);
+    event Repay(address indexed client, address indexed bank, uint id, uint amount);
+    event Warning(address indexed client, address indexed bank);
 
     constructor() ERC721("Credit System Soulbound Token", "CS_SBT") {}
 
