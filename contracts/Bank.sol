@@ -11,7 +11,7 @@ struct Order {
 
 contract Bank {
 	using Counters for Counters.Counter;
-	Counters.Counter private id_counter;
+	// Counters.Counter private id_counter;
 
 	SoulboundToken public sbt;
 	address public owner;
@@ -55,12 +55,13 @@ contract Bank {
 		require(target == number, "This is not your SBT number.");
 		require(sbt_number[msg.sender] == 0, "You have registered.");
 		sbt_number[msg.sender] = target;
+		credits[msg.sender] = 1000000000000000000;
 	}
 
-	function pay(address shop, uint amount) public onlyClient {
+	function pay(uint id, address shop, uint amount) public onlyClient {
 		require(amount <= (credits[msg.sender]-arrears[msg.sender]), "You don't have enough credit.");
-		id_counter.increment();
-		uint id = id_counter.current();
+		// id_counter.increment();
+		// uint id = id_counter.current();
 		arrears[msg.sender] += amount;
 		order_info[id] = Order(false, amount, shop);
 		client_orders[msg.sender].push(id);
@@ -68,34 +69,28 @@ contract Bank {
 		sbt.logBorrowing(msg.sender, shop, id, amount);
 	}
 
-	function repay() public payable onlyClient returns (uint, uint) {
+	function repay() public payable onlyClient {
 		require(recv, "It's not the time to repay.");
 		uint value = msg.value;
-		uint repay_amount = 0;
-		uint should_pay;
-		uint refund;
-		uint item_counter = 0;
+		// uint repay_amount = 0;
+		uint should_pay = 0;
+		// uint refund;
+		// uint item_counter = 0;
 		
 		for (uint i=0; i<client_orders[msg.sender].length; i++) {
-			should_pay = order_info[client_orders[msg.sender][i]].amount;
-			if ((value - repay_amount) >= should_pay){
-				repay_amount += should_pay;
-				order_info[client_orders[msg.sender][i]].isFinished = true;
-				sbt.logRepaying(msg.sender, client_orders[msg.sender][i], should_pay);
-			} else {
-				client_orders[msg.sender][item_counter] = client_orders[msg.sender][i];
-				item_counter += 1;
-			}
+			should_pay += order_info[client_orders[msg.sender][i]].amount;
 		}
-		for(uint i=0; i<(client_orders[msg.sender].length-item_counter); i++){
-			client_orders[msg.sender].pop();
+		require(value>=should_pay, "You dont have enough ETH to repay");
+		for (uint i=0; i<client_orders[msg.sender].length; i++) {
+			order_info[client_orders[msg.sender][i]].isFinished = true;
+			sbt.logRepaying(msg.sender, client_orders[msg.sender][i], should_pay);
 		}
-		refund = value - repay_amount;
-		arrears[msg.sender] -= repay_amount;
-		if (refund != 0){
-			payable(msg.sender).transfer(refund);
-		}
-		return (client_orders[msg.sender].length, refund);
+		client_orders[msg.sender] = new uint[](0);
+		arrears[msg.sender] = 0;
+	}
+
+	function warning(address client) public onlyBank {
+		sbt.logWarning(client);
 	}
 
 	function start_recv() public onlyBank {
@@ -114,11 +109,15 @@ contract Bank {
 		return arrears[client];
 	}
 
-	function getClientOrders(address client) public view onlySelfOrBank(client) returns (Order[] memory){
-		Order[] memory orders = new Order[]( client_orders[client].length );
-		for(uint i=0; i<client_orders[client].length; i++){
-			orders[i] = order_info[client_orders[client][i]];
-		}
-		return orders;
+	function getClientOrders(address client) public view onlySelfOrBank(client) returns (uint[] memory){
+		// Order[] memory orders = new Order[]( client_orders[client].length );
+		// for(uint i=0; i<client_orders[client].length; i++){
+		// 	orders[i] = order_info[client_orders[client][i]];
+		// }
+		return client_orders[client];
+	}
+
+	function getSBTNumber(address client) public view onlySelfOrBank(client) returns (uint) {
+		return sbt_number[client];
 	}
 }
