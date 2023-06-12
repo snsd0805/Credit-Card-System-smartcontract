@@ -10,7 +10,7 @@ We have implemented a simple Soulbound Token (SBT), which is non-transferable. T
 
 After minting your own SBT, you can register with any bank that trusts this SBT. Each bank can access the client's credit information to establish a credit limit. The registered client can then call the bank's pay() function to request the bank to make payments to the shop on their behalf. The client will repay the bank once they are able to cover the outstanding balance.
 
-Additionally, we have implemented a web interface for interacting with this repository. You can find the web interface repository [here]().
+Additionally, we have implemented a web interface for interacting with this repository. You can find the web interface repository [here](https://github.com/snsd0805/Credit-Card-System-web).
 
 ## Deploy (localhost)
 1. Open Ganache on your localhost
@@ -32,4 +32,4 @@ Additionally, we have implemented a web interface for interacting with this repo
     ```
     truffle(development)> deploy    
     ```
-6. Once the contracts are deployed, you can set up and interact with the web interface repository [here]().
+6. Once the contracts are deployed, you can set up and interact with the web interface repository [here](https://github.com/snsd0805/Credit-Card-System-web).
