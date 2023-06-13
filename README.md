@@ -14,18 +14,17 @@ Additionally, we have implemented a web interface for interacting with this repo
 
 ## Deploy (localhost)
 1. Open Ganache on your localhost
-2. Install the project dependencies:
-    ```
-    npm install
-    ```
-
-3. clone this repo
+2. clone this repo
     ```
     git clone $THIS_REPO_LINK
     ```
-4. Open the Truffle console
+3. Install the project dependencies:
     ```
     cd Credit-Card-System-smartcontract
+    npm install
+    ```
+4. Open the Truffle console
+    ```
     truffle console
     ```
 5. Deploy the contracts in the Truffle console:
